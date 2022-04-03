@@ -1,7 +1,8 @@
 // imports || require
 const mongoose = require("mongoose");
 const crypto = require("crypto");
-const uuidv5 = require("uuid/v5");
+// const uuidv5 = require("uuid/v5");
+const { v4: uuid4 } = require("uuid");
 
 // user schema define using mongoose
 var userSchema = new mongoose.Schema(
@@ -55,7 +56,7 @@ userSchema
   .virtual("password") // create a virtual property `password` with setter and getter
   .set(function (password) {
     this._password = password;
-    this.salt = uuidv5();
+    this.salt = uuid4();
     this.encry_password = this.securePassword(password);
   })
   .get(function () {
@@ -63,14 +64,14 @@ userSchema
   });
 
 // creating schema method - multiple
-userSchema.method = {
+userSchema.methods = {
   //TODO: Yet to be explain
   authenticate: function (plainpassword) {
     return this.securePassword(plainpassword) === this.encry_password;
   },
 
   securePassword: function (plainpassword) {
-    if (!password) return "";
+    if (!plainpassword) return "";
     try {
       return crypto
         .createHmac("sha256", this.salt)
