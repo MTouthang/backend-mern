@@ -4,50 +4,55 @@ const crypto = require("crypto");
 const uuidv5 = require("uuid/v5");
 
 // user schema define using mongoose
-var userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    maxlength: 32,
-    trim: true,
-  },
-  lastname: {
-    type: String,
-    maxlength: 32,
-    trim: true,
-  },
-  email: {
-    type: String,
-    trim: true,
-    required: true,
-    unique: true,
-  },
+var userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      maxlength: 32,
+      trim: true,
+    },
+    lastname: {
+      type: String,
+      maxlength: 32,
+      trim: true,
+    },
+    email: {
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+    },
 
-  usrinfo: {
-    type: String,
-    trim: true,
-  },
+    usrinfo: {
+      type: String,
+      trim: true,
+    },
 
-  encry_password: {
-    type: String,
-    required: true,
-  },
-  salt: String,
-  role: {
-    type: Number,
-    default: 0,
-  },
+    encry_password: {
+      type: String,
+      required: true,
+    },
 
-  purchases: {
-    type: Array,
-    default: [],
+    salt: String,
+
+    role: {
+      type: Number,
+      default: 0,
+    },
+
+    purchases: {
+      type: Array,
+      default: [],
+    },
   },
-});
+  { timestamps: true }
+);
 
 // virtual: encryption on the fly
 // TODO: try getting deep
 userSchema
-  .virtual("password")
+  .virtual("password") // create a virtual property `password` with setter and getter
   .set(function (password) {
     this._password = password;
     this.salt = uuidv5();
@@ -57,7 +62,7 @@ userSchema
     return this._password;
   });
 
-// defining multiple method for User schema
+// creating schema method - multiple
 userSchema.method = {
   //TODO: Yet to be explain
   authenticate: function (plainpassword) {
@@ -67,10 +72,13 @@ userSchema.method = {
   securePassword: function (plainpassword) {
     if (!password) return "";
     try {
-      return createHmac("sha256", this.salt)
+      return crypto
+        .createHmac("sha256", this.salt)
         .update(plainpassword)
         .digest("hex");
-    } catch (err) {}
+    } catch (err) {
+      return "";
+    }
   },
 };
 
