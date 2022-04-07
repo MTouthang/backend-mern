@@ -1,15 +1,19 @@
 // Imports ---
-require("dotenv").config();
-const mongoose = require("mongoose");
-const express = require("express");
+require("dotenv").config(); //dotenv
+const mongoose = require("mongoose"); // mongoose database connectivity
+const express = require("express"); // express - server
 const app = express();
 
 // middleware imports ---
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser"); // token stuff
 const cors = require("cors");
 
-const authRoutes = require("./routes/auth");
+// import the routes
+const authRoutes = require("./routes/auth"); // auth routes
+const userRoutes = require("./routes/user"); // user routes
+const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
 
 // database connection ---
 mongoose
@@ -29,6 +33,9 @@ app.use(cors());
 
 // Routes ---
 app.use("/api", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", productRoutes);
 
 // port config ---
 const port = process.env.PORT || 8000;
