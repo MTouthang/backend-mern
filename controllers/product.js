@@ -6,7 +6,7 @@ const fs = require("fs"); // file system
 exports.getProductById = (req, res, next, id) => {
   Product.findById(id)
     .populate("category")
-    .exec((err) => {
+    .exec((err, product) => {
       if (err) {
         return res.status(400).json({
           error: "Product not found",
@@ -134,7 +134,7 @@ exports.getAllProducts = (req, res) => {
   Product.find()
     .select("-photo")
     .populate("category")
-    .sort([[sortBy, "asc"]])
+    .sort([[sortby, "asc"]])
     .limit(limit)
     .exec((err, products) => {
       if (err) {

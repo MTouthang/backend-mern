@@ -5,13 +5,13 @@ var jwt = require("jsonwebtoken");
 var expressJwt = require("express-jwt");
 
 exports.signup = (req, res) => {
-  const errors = validationResult(req);
-  console.log(`This is the errors const: " ${errors}`);
+  const error = validationResult(req);
+  console.log(`This is the errors const: " ${error}`);
 
   // check for the error presents or not presents
-  if (!errors.isEmpty()) {
+  if (!error.isEmpty()) {
     return res.status(422).json({
-      errors: errors.array()[0].msg,
+      errors: error.array()[0].msg,
     });
   }
 
